@@ -14,13 +14,12 @@ export const pubSub = new PubSub();
  */
 const checkAuthorization = token => {
   return new Promise(async (resolve, reject) => {
-    const authUser = await jwt.verify(token, process.env.SECRET);
-
-    if (authUser) {
+    jwt.verify(token.replace(/^Bearer /, ''), process.env.SECRET, (err, authUser) => {
+      if (err) {
+        return reject(new Error("Couldn't authenticate user"))
+      }
       resolve(authUser);
-    } else {
-      reject("Couldn't authenticate user");
-    }
+    });
   });
 };
 
